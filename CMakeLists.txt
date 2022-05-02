@@ -20,7 +20,6 @@ add_compile_options(
 
 add_executable( ${APP_BINARY_NAME} )
 target_sources( ${APP_BINARY_NAME} PRIVATE
-    src/Sample.cpp
     src/main.cpp
 )
 
@@ -51,7 +50,6 @@ enable_testing()
 
 add_executable( ${TEST_BINARY_NAME} )
 target_sources( ${TEST_BINARY_NAME} PRIVATE
-    src/Sample.cpp
     test/gtest_test.cpp
 )
 target_link_libraries( ${TEST_BINARY_NAME}
