@@ -18,6 +18,7 @@ set( COMMON_SRC_FILES ${COMMON_SRC_FILES}
   src/game/Components/AttackComponent.cpp
   src/game/Components/HealthComponent.cpp
   src/game/Components/MovementComponent.cpp
+  src/game/Scene/TileMap.cpp
 )
 
 set( COMMON_INC_DIRS ${COMMON_INC_DIRS}
