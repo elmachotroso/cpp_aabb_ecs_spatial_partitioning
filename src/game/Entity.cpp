@@ -48,6 +48,24 @@ namespace Game
         return components;
     }
 
+    void Entity::addComponent( const char classId )
+    {
+        auto component = ComponentFactory::create( this, classId );
+        if( component )
+        {
+            std::type_index key = component->getTypeId();
+            if( !m_components.contains( key ) )
+            {
+                addComponent( component->getTypeId(), component );
+            }
+            else
+            {
+                m_components[ key ]->copy( *component );
+                SAFE_DELETE( component );
+            }
+        }
+    }
+
     void Entity::addComponent( std::type_index key, Component * component )
     {
         if( m_components.contains( key ) )
@@ -61,8 +79,7 @@ namespace Game
     {
         for( auto & kvp : m_components )
         {
-            delete kvp.second;
-            kvp.second = nullptr;
+            SAFE_DELETE( kvp.second );
         }
         m_components.clear();
     }

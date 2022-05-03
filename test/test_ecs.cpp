@@ -27,6 +27,21 @@ TEST( EntityComponentSystem, Entity_Add_MovementComponent ) {
     EXPECT_EQ( speed, mover->getSpeed() );
 }
 
+TEST( EntityComponentSystem, Entity_Add_MovementComponent_By_ClassId ) {
+    Game::Entity test;
+    EXPECT_NE( Utils::UUID_INVALID, test.getUuid() );
+    
+    // Add MovementComponent
+    test.addComponent( Game::MovementComponent::CLASS_ID );
+    auto mover = test.getComponent< Game::MovementComponent >();
+    EXPECT_NE( nullptr, mover );
+    
+    // Test MovementComponent
+    const auto speed = 54.f;
+    mover->setSpeed( speed );
+    EXPECT_EQ( speed, mover->getSpeed() );
+}
+
 TEST( EntityComponentSystem, Entity_Add_HealthComponent ) {
     Game::Entity test;
     EXPECT_NE( Utils::UUID_INVALID, test.getUuid() );
@@ -42,12 +57,42 @@ TEST( EntityComponentSystem, Entity_Add_HealthComponent ) {
     EXPECT_EQ( hp, health->getHealth() );
 }
 
+TEST( EntityComponentSystem, Entity_Add_HealthComponent_By_ClassId ) {
+    Game::Entity test;
+    EXPECT_NE( Utils::UUID_INVALID, test.getUuid() );
+
+    // Add HealthComponent
+    test.addComponent( Game::HealthComponent::CLASS_ID );
+    auto health = test.getComponent< Game::HealthComponent >();
+    EXPECT_NE( nullptr, health );
+    
+    // Test HealthComponent
+    const auto hp = 2500;
+    health->setHealth( hp );
+    EXPECT_EQ( hp, health->getHealth() );
+}
+
 TEST( EntityComponentSystem, Entity_Add_AttackComponent ) {
     Game::Entity test;
     EXPECT_NE( Utils::UUID_INVALID, test.getUuid() );
     
     // Add AttackComponent
     test.addComponent< Game::AttackComponent >();
+    auto attack = test.getComponent< Game::AttackComponent >();
+    EXPECT_NE( nullptr, attack );
+    
+    // Test AttackComponent
+    const auto power = 999999999u;
+    attack->setAttackPower( power );
+    EXPECT_EQ( power, attack->getAttackPower() );
+}
+
+TEST( EntityComponentSystem, Entity_Add_AttackComponent_By_ClassId ) {
+    Game::Entity test;
+    EXPECT_NE( Utils::UUID_INVALID, test.getUuid() );
+    
+    // Add AttackComponent
+    test.addComponent( Game::AttackComponent::CLASS_ID );
     auto attack = test.getComponent< Game::AttackComponent >();
     EXPECT_NE( nullptr, attack );
     

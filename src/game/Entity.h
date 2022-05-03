@@ -42,6 +42,7 @@ namespace Game
             template< typename Component_t >
             inline void addComponent( Component_t * component );
 
+            void addComponent( const char classId );
             void addComponent( std::type_index key, Component * component );
 
             template< typename Component_t >
@@ -104,7 +105,7 @@ namespace Game
         std::type_index key = typeid( Component_t );
         if( m_components.contains( key ) )
         {
-            delete m_components[ key ];
+            SAFE_DELETE( m_components[ key ] );
             m_components.erase( key );
         }
     }

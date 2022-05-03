@@ -3,6 +3,14 @@
 
 /// Convenience macros
 
+#define SAFE_DELETE( instance ) \
+    delete (instance); \
+    (instance) = nullptr;
+
+#define SAFE_DELETE_ARRAY( arrayInstance ) \
+    delete [] (arrayInstance); \
+    (arrayInstance) = nullptr;
+
 /// VAR_SYNTHESIZE***
 /// Macros to simplify coding of member variables of classes.
 /// By default it generates the getter and setter, while _READONLY only generates
