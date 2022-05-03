@@ -11,6 +11,19 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin/${CMAKE_BUIL
 set( APP_PROJECT_NAME ${APP_PROJECT_NAME} app )
 set( APP_BINARY_NAME ${APP_BINARY_NAME} app )
 
+set( COMMON_SRC_FILES ${COMMON_SRC_FILES}
+  src/utils/UUID.cpp
+  src/game/Entity.cpp
+  src/game/Components/Component.cpp
+  src/game/Components/AttackComponent.cpp
+  src/game/Components/HealthComponent.cpp
+  src/game/Components/MovementComponent.cpp
+)
+
+set( COMMON_INC_DIRS ${COMMON_INC_DIRS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
 project( ${APP_PROJECT_NAME} VERSION 1.0 )
 
 add_compile_options(
@@ -20,6 +33,7 @@ add_compile_options(
 
 add_executable( ${APP_BINARY_NAME} )
 target_sources( ${APP_BINARY_NAME} PRIVATE
+    ${COMMON_SRC_FILES}
     src/main.cpp
 )
 
@@ -27,7 +41,7 @@ target_sources( ${APP_BINARY_NAME} PRIVATE
 set_property( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${APP_BINARY_NAME} )
 
 # headers
-target_include_directories( ${APP_BINARY_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src )
+target_include_directories( ${APP_BINARY_NAME} PUBLIC ${COMMON_INC_DIRS} )
 
 # adding library 
 #add_library(mylib STATIC ${LIB_SRC_FILES})
@@ -50,12 +64,14 @@ enable_testing()
 
 add_executable( ${TEST_BINARY_NAME} )
 target_sources( ${TEST_BINARY_NAME} PRIVATE
-    test/gtest_test.cpp
+    ${COMMON_SRC_FILES}
+    test/test_math.cpp
+    test/test_ecs.cpp
 )
 target_link_libraries( ${TEST_BINARY_NAME}
     gtest_main
 )
-target_include_directories( ${TEST_BINARY_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src )
+target_include_directories( ${TEST_BINARY_NAME} PUBLIC ${COMMON_INC_DIRS} )
 
 include( GoogleTest )
 gtest_discover_tests( ${TEST_BINARY_NAME} )

@@ -28,6 +28,25 @@ namespace Math
                 setPositionAndSize( x, y, width, height );
             }
 
+            Rectangle2D( const Rectangle2D & other )
+                : m_x { other.m_x }
+                , m_y { other.m_y }
+                , m_width { other.m_width }
+                , m_height { other.m_height }
+                , m_extents { other.m_extents }
+            {                
+            }
+
+            Rectangle2D & operator=( const Rectangle2D & other )
+            {
+                m_x = other.m_x;
+                m_y = other.m_y;
+                m_width = other.m_width;
+                m_height = other.m_height;
+                m_extents = other.m_extents;
+                return *this;
+            }
+
             inline void updateBounds( Bounds2D & outb, const float x, const float y, const float width, const float height )
             {
                 const float halfWidth { width * 0.5f };
