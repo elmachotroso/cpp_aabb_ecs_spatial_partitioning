@@ -32,6 +32,7 @@ namespace Game
                 , const double sceneWidth = LIMIT_MAX_FLOAT * 2
                 , const double sceneHeight = LIMIT_MAX_FLOAT * 2 );
             void addEntity( Entity & entity );
+            void removeEntity( Entity & entity );
             Bucket & getBucketAt( const BucketCoord & bucketCoord );
             std::vector< BucketCoord > getBucketCoordsFor( const Entity & entity );
             TileMap::Bucket getEntitiesNear( const Entity & entity );

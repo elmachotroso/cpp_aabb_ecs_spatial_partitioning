@@ -31,6 +31,15 @@ namespace Game
         }
     }
 
+    void TileMap::removeEntity( Entity & entity )
+    {
+        auto bucketCoords { std::move( getBucketCoordsFor( entity ) ) };
+        for( auto & coord : bucketCoords )
+        {
+            getBucketAt( coord ).erase( entity.getUuid() );
+        }
+    }
+
     TileMap::Bucket & TileMap::getBucketAt( const TileMap::BucketCoord & bucketCoord )
     {
         if( !m_Buckets.contains( bucketCoord ) )
@@ -64,8 +73,8 @@ namespace Game
         std::vector< BucketCoord > nearBucketCoords { getBucketCoordsFor( entity ) };
         for( BucketCoord & coord : nearBucketCoords )
         {
-            Bucket bucket { getBucketAt( coord ) }; // map copy intentional for merge
-            unifiedBucket.merge( bucket );
+            Bucket & bucket { getBucketAt( coord ) };
+            unifiedBucket.insert( bucket.begin(), bucket.end() );
         }
         unifiedBucket.erase( entity.getUuid() );
         return unifiedBucket;
