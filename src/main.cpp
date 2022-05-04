@@ -100,6 +100,7 @@ int main( int argc, const char * argv[] )
     std::cout << "Running program against file: " << fileOpened << "\n";
     
     std::size_t numberOfEntities { 0 };
+    Math::Bounds2D minmax {};
     std::vector< Game::Entity * > entities;
 
     // RAII scope for file
@@ -149,8 +150,17 @@ int main( int argc, const char * argv[] )
                 return 4;
             }
 
+            //std::cerr << "\n\tLoaded Entity: " << x << " " << y << " " << width << " " << height;
+
             Game::Entity * entity = new Game::Entity( x, y, width, height );
             entities.push_back( entity );
+            const Math::Bounds2D & entityBounds { entity->getRect().getExtents() };
+            
+            //std::cerr << "\n\t\tBounds: " << entityBounds.xmin << ", " << entityBounds.ymin << " " << entityBounds.xmax << ", " << entityBounds.ymax;
+            minmax.xmin = std::min( minmax.xmin, entityBounds.xmin );
+            minmax.ymin = std::min( minmax.ymin, entityBounds.ymin );
+            minmax.xmax = std::max( minmax.xmax, entityBounds.xmax );
+            minmax.ymax = std::max( minmax.ymax, entityBounds.ymax );
 
             // Not every Entity has Components.
             std::string componentTypes;
@@ -170,11 +180,23 @@ int main( int argc, const char * argv[] )
         file.close();
     }
 
+    double sceneWidth { std::max( std::fabs( minmax.xmin ), std::fabs( minmax.xmax ) ) * 2.0 };
+    double sceneHeight { std::max( std::fabs( minmax.ymin ), std::fabs( minmax.ymax ) ) * 2.0 };
+    std::cerr << "\n\n\tEntities Stats:"
+        << "\n\tminx: " << minmax.xmin
+        << "\n\tminy: " << minmax.ymin
+        << "\n\tmaxx: " << minmax.xmax
+        << "\n\tmaxy: " << minmax.ymax
+        << "\n\twidth: " << sceneWidth
+        << "\n\theight: " << sceneHeight
+        << "\n\n";
+
     std::sort( entities.begin(), entities.end() );
-    Game::TileMap scene( 256, entities );
+    Game::TileMap scene( numberOfEntities, entities, sceneWidth, sceneHeight );
 
     auto start = std::chrono::high_resolution_clock::now();
 
+    std::cerr << "\nRunning SimpleAlgorithm...\n";
     std::map< std::string, unsigned int > intersections1;
     SimpleAlgorithm::findUniqueIntersections( entities, intersections1 );
     std::cerr << "There are " << intersections1.size() 
@@ -186,7 +208,7 @@ int main( int argc, const char * argv[] )
     std::cerr << "SimpleAlgorithm executed in " << runMS1.count() << "ms.\n";
 
     start = std::chrono::high_resolution_clock::now();
-
+    std::cerr << "\nRunning SpacePartitionAlgorithm...\n";
     std::map< std::string, unsigned int > intersections2;
     SpacePartitionAlgorithm::findUniqueIntersections( entities, scene, intersections2 );
     std::cerr << "There are " << intersections2.size() 
@@ -197,13 +219,13 @@ int main( int argc, const char * argv[] )
     auto runMS2 = std::chrono::duration_cast< std::chrono::milliseconds >( end - start );
     std::cerr << "SpacePartitionAlgorithm executed in " << runMS2.count() << "ms.\n";
 
-    std::map< std::string, unsigned int > u;
-    u.merge( intersections1 );
-    u.merge( intersections2 );
-    for( auto & kvp : intersections2 )
-    {
-        std::cerr << "\tExtra: " << kvp.first << " (" << kvp.second << ")\n";
-    }
+    // std::map< std::string, unsigned int > u;
+    // u.merge( intersections1 );
+    // u.merge( intersections2 );
+    // for( auto & kvp : intersections2 )
+    // {
+    //     std::cerr << "\tExtra: " << kvp.first << " (" << kvp.second << ")\n";
+    // }
 
     for( Game::Entity * entity : entities )
     {

@@ -45,7 +45,7 @@ namespace Game
             VAR_SYNTHESIZE_READONLY( unsigned int, Divisions );
             VAR_SYNTHESIZE_READONLY( double, SceneWidth );
             VAR_SYNTHESIZE_READONLY( double, SceneHeight );
-            VAR_SYNTHESIZE_READONLY( Grid, Buckets );
+            VAR_SYNTHESIZE_REF_READONLY( Grid, Buckets );
             double m_cellWidth;
             double m_cellHeight;
             Math::Bounds2D m_sceneExtents;     

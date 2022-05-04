@@ -58,7 +58,7 @@ namespace Game
 
         protected:
             VAR_SYNTHESIZE_READONLY( Utils::UUID, Uuid );
-            VAR_SYNTHESIZE_READONLY( Math::Rectangle2D, Rect );
+            VAR_SYNTHESIZE_REF_READONLY( Math::Rectangle2D, Rect );
 
         private:
             void copyComponents( const ComponentMap & other );
