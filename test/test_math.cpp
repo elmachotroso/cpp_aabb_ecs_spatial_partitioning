@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <limits>
-
+#include "utils/macros.h"
 #include "math/Rectangle2D.h"
 
 TEST( Math, Epsilon_Test ) {
@@ -87,7 +87,7 @@ TEST( Rectangle2D, Point_And_Box_Intersect ) {
 }
 
 TEST( Rectangle2D, Limits_TopLeft_vs_BottomRight_Small ) {
-    const float floatMax { std::numeric_limits< float >::max() };
+    const float floatMax { LIMIT_MAX_FLOAT };
     const float halfFloatMax { floatMax * 0.5f };
     const Math::Rectangle2D rect1{ -floatMax, floatMax, halfFloatMax, halfFloatMax }; // top left
     const Math::Rectangle2D rect2{ floatMax, -floatMax, halfFloatMax, halfFloatMax }; // bottom right
@@ -101,7 +101,7 @@ TEST( Rectangle2D, Limits_TopLeft_vs_BottomRight_Small ) {
 }
 
 TEST( Rectangle2D, Limits_TopLeft_vs_BottomRight_Big ) {
-    const float floatMax { std::numeric_limits< float >::max() };
+    const float floatMax { LIMIT_MAX_FLOAT };
     const float halfFloatMax { floatMax * 0.5f };
     const Math::Rectangle2D rect1{ -halfFloatMax, halfFloatMax, floatMax, floatMax }; // top left
     const Math::Rectangle2D rect2{ halfFloatMax, -halfFloatMax, floatMax, floatMax }; // bottom right

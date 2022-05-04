@@ -6,6 +6,7 @@
 
 #include <limits>
 #include <cmath>
+#include "utils/macros.h"
 #include "math/math.h"
 #include "math/Bounds2D.h"
 
@@ -53,8 +54,8 @@ namespace Math
                 const float halfHeight { height * 0.5f };
 
                 // to ensure we don't overflow or underflow float range
-                const float floatMin = std::numeric_limits< float >::lowest();
-                const float floatMax = std::numeric_limits< float >::max();
+                const float floatMin = LIMIT_MIN_FLOAT;
+                const float floatMax = LIMIT_MAX_FLOAT;
                 const double dx = x;
                 const double dy = y;
 

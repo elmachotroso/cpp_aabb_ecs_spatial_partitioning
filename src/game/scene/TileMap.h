@@ -6,10 +6,12 @@
 /// This will aid in getting a subset of Entities in the scene provided the
 /// buckets of interest.
 
+#include <vector>
 #include <map>
 #include <limits.h>
 #include "utils/macros.h"
 #include "utils/UUID.h"
+#include "math/Bounds2D.h"
 #include "math/Rectangle2D.h"
 
 namespace Game
@@ -19,27 +21,33 @@ namespace Game
     class TileMap
     {
         public:
-            typedef std::map< Utils::UUID, Entity * > Bucket;
-            typedef std::map< std::string, Bucket > Grid;
+            typedef std::pair< unsigned int, unsigned int > BucketCoord;
+            typedef std::map< Utils::UUID, Entity * > Bucket;            
+            typedef std::map< BucketCoord, Bucket > Grid;
+            
             
             TileMap() = delete;
             TileMap( const unsigned int divisions
-                , const double sceneWidth = std::numeric_limits< double >::max()
-                , const double sceneHeight = std::numeric_limits< double >::max() );
+                , const std::vector< Entity * > & listOfEntities = {}
+                , const double sceneWidth = LIMIT_MAX_FLOAT * 2
+                , const double sceneHeight = LIMIT_MAX_FLOAT * 2 );
             void addEntity( Entity & entity );
-            void getEntitiesNear( const Entity & entity, Bucket & outBucket );
+            Bucket & getBucketAt( const BucketCoord & bucketCoord );
+            std::vector< BucketCoord > getBucketCoordsFor( const Entity & entity );
+            TileMap::Bucket getEntitiesNear( const Entity & entity );
 
         protected:
             void initGrid( const unsigned int divisions
                 , const double sceneWidth, const double sceneHeight );
-            Bucket & getBucketAt( const std::string & coordHash );
-            std::string toCoordHash( const Entity & entity );
-            std::string toCoordHash( const Math::Rectangle2D & rect );
+            BucketCoord toCoord( const float x, const float y );
 
             VAR_SYNTHESIZE_READONLY( unsigned int, Divisions );
             VAR_SYNTHESIZE_READONLY( double, SceneWidth );
             VAR_SYNTHESIZE_READONLY( double, SceneHeight );
-            VAR_SYNTHESIZE_READONLY( Grid, Buckets );            
+            VAR_SYNTHESIZE_READONLY( Grid, Buckets );
+            double m_cellWidth;
+            double m_cellHeight;
+            Math::Bounds2D m_sceneExtents;     
     };
 }
 

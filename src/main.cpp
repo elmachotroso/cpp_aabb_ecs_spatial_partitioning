@@ -9,7 +9,7 @@
 #include "game/components/Component.h"
 #include "game/scene/TileMap.h"
 
-namespace SlowAlgorithm
+namespace SimpleAlgorithm
 {
     void findUniqueIntersections(
         const std::vector< Game::Entity * > & entities
@@ -27,12 +27,12 @@ namespace SlowAlgorithm
                 if( entityA->getUuid() == entityB->getUuid() )
                     continue;
 
-                std::ostringstream oss;
-                oss << entityA->getUuid() << entityB->getUuid();
-                std::string key = oss.str();
-
                 if( Math::isIntersectAABB( entityA->getRect(), entityB->getRect() ) )
                 {
+                    std::ostringstream oss;
+                    oss << entityA->getUuid() << entityB->getUuid();
+                    std::string key = oss.str();
+                    
                     if( !outIntersections.contains( key ) )
                     {
                         outIntersections[ key ] = 0;
@@ -54,8 +54,7 @@ namespace SpacePartitionAlgorithm
         outIntersections.clear();
         for( Game::Entity * entity : entities )
         {
-            Game::TileMap::Bucket nearEntities;
-            scene.getEntitiesNear( *entity, nearEntities );
+            Game::TileMap::Bucket nearEntities = std::move( scene.getEntitiesNear( *entity ) );
             for( auto & kvp : nearEntities )
             {
                 Game::Entity * entityA = entity;
@@ -66,12 +65,17 @@ namespace SpacePartitionAlgorithm
                     entityB = entity;
                 }
 
-                std::ostringstream oss;
-                oss << entityA->getUuid() << entityB->getUuid();
-                std::string key = oss.str();
+                if( entityA == entityB )
+                {
+                    continue;
+                }
 
                 if( Math::isIntersectAABB( entityA->getRect(), entityB->getRect() ) )
                 {
+                    std::ostringstream oss;
+                    oss << entityA->getUuid() << " " << entityB->getUuid();
+                    std::string key = std::move( oss.str() );
+
                     if( !outIntersections.contains( key ) )
                     {
                         outIntersections[ key ] = 0;
@@ -96,7 +100,6 @@ int main( int argc, const char * argv[] )
     
     std::size_t numberOfEntities { 0 };
     std::vector< Game::Entity * > entities;
-    Game::TileMap scene( 1 );
 
     // RAII scope for file
     {
@@ -147,7 +150,6 @@ int main( int argc, const char * argv[] )
 
             Game::Entity * entity = new Game::Entity( x, y, width, height );
             entities.push_back( entity );
-            scene.addEntity( *entity );
 
             // Not every Entity has Components.
             std::string componentTypes;
@@ -168,23 +170,24 @@ int main( int argc, const char * argv[] )
     }
 
     std::sort( entities.begin(), entities.end() );
+    Game::TileMap scene( 256, entities );
 
     auto start = std::chrono::high_resolution_clock::now();
 
     std::map< std::string, unsigned int > intersections1;
-    SlowAlgorithm::findUniqueIntersections( entities, intersections1 );
+    SimpleAlgorithm::findUniqueIntersections( entities, intersections1 );
     std::cerr << "There are " << intersections1.size() 
         << " unique intersections between " << entities.size()
         << " entities.\n";
 
     auto end = std::chrono::high_resolution_clock::now();
     auto runMS1 = std::chrono::duration_cast< std::chrono::milliseconds >( end - start );
-    std::cerr << "SlowAlgorithm executed in " << runMS1.count() << "ms.\n";
+    std::cerr << "SimpleAlgorithm executed in " << runMS1.count() << "ms.\n";
 
     start = std::chrono::high_resolution_clock::now();
 
     std::map< std::string, unsigned int > intersections2;
-    SpacePartitionAlgorithm::findUniqueIntersections( entities, scene, intersections1 );
+    SpacePartitionAlgorithm::findUniqueIntersections( entities, scene, intersections2 );
     std::cerr << "There are " << intersections2.size() 
         << " unique intersections between " << entities.size()
         << " entities.\n";
@@ -192,6 +195,14 @@ int main( int argc, const char * argv[] )
     end = std::chrono::high_resolution_clock::now();
     auto runMS2 = std::chrono::duration_cast< std::chrono::milliseconds >( end - start );
     std::cerr << "SpacePartitionAlgorithm executed in " << runMS2.count() << "ms.\n";
+
+    std::map< std::string, unsigned int > u;
+    u.merge( intersections1 );
+    u.merge( intersections2 );
+    for( auto & kvp : intersections2 )
+    {
+        std::cerr << "\tExtra: " << kvp.first << " (" << kvp.second << ")\n";
+    }
 
     for( Game::Entity * entity : entities )
     {
