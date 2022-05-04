@@ -24,7 +24,8 @@ namespace Game
 
     void TileMap::addEntity( Entity & entity )
     {
-        auto bucketCoords { std::move( getBucketCoordsFor( entity ) ) };
+        std::vector< BucketCoord > bucketCoords;
+        getBucketCoordsFor( entity, bucketCoords );
         for( auto & coord : bucketCoords )
         {
             getBucketAt( coord )[ entity.getUuid() ] = &entity;
@@ -33,7 +34,8 @@ namespace Game
 
     void TileMap::removeEntity( Entity & entity )
     {
-        auto bucketCoords { std::move( getBucketCoordsFor( entity ) ) };
+        std::vector< BucketCoord > bucketCoords;
+        getBucketCoordsFor( entity, bucketCoords );
         for( auto & coord : bucketCoords )
         {
             getBucketAt( coord ).erase( entity.getUuid() );
@@ -49,35 +51,33 @@ namespace Game
         return m_Buckets[ bucketCoord ];
     }
 
-    std::vector< TileMap::BucketCoord > TileMap::getBucketCoordsFor( const Entity & entity )
+    void TileMap::getBucketCoordsFor( const Entity & entity, std::vector< TileMap::BucketCoord > & outCoords )
     {
         const Math::Bounds2D & bounds { entity.getRect().getExtents() };
-        BucketCoord min { toCoord( bounds.xmin, bounds.ymin ) };
-        BucketCoord max { toCoord( bounds.xmax, bounds.ymax ) };
+        BucketCoord min;
+        toCoord( bounds.xmin, bounds.ymin, min );
+        BucketCoord max;
+        toCoord( bounds.xmax, bounds.ymax, max );
 
-        std::vector< BucketCoord > result;
         for( auto y = min.second; y <= max.second; ++y )
         {
             for( auto x = min.first; x <= max.first; ++x )
             {
-                result.emplace_back( BucketCoord { x, y } );
+                outCoords.emplace_back( BucketCoord { x, y } );
             }
         }
-        return result;
     }
 
-    TileMap::Bucket TileMap::getEntitiesNear( const Entity & entity )
+    void TileMap::getEntitiesNear( const Entity & entity, TileMap::Bucket & outBucket )
     {
-        TileMap::Bucket unifiedBucket {};
-
-        std::vector< BucketCoord > nearBucketCoords { getBucketCoordsFor( entity ) };
+        std::vector< BucketCoord > nearBucketCoords;
+        getBucketCoordsFor( entity, nearBucketCoords );
         for( BucketCoord & coord : nearBucketCoords )
         {
             Bucket & bucket { getBucketAt( coord ) };
-            unifiedBucket.insert( bucket.begin(), bucket.end() );
+            outBucket.insert( bucket.begin(), bucket.end() );
         }
-        unifiedBucket.erase( entity.getUuid() );
-        return unifiedBucket;
+        outBucket.erase( entity.getUuid() );
     }
 
     void TileMap::initGrid( const unsigned int divisions
@@ -102,12 +102,9 @@ namespace Game
             << std::endl;
     }
 
-    TileMap::BucketCoord TileMap::toCoord( const float x, const float y )
+    void TileMap::toCoord( const float x, const float y, TileMap::BucketCoord & outCoord )
     {
-        BucketCoord result {
-            .first = std::floor( ( x - m_sceneExtents.xmin ) / m_cellWidth ),
-            .second = std::floor( ( y - m_sceneExtents.ymin ) / m_cellHeight )
-        };
-        return result;
+        outCoord.first = std::floor( ( x - m_sceneExtents.xmin ) / m_cellWidth );
+        outCoord.second = std::floor( ( y - m_sceneExtents.ymin ) / m_cellHeight );
     }
 }

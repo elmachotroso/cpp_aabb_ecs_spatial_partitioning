@@ -34,13 +34,13 @@ namespace Game
             void addEntity( Entity & entity );
             void removeEntity( Entity & entity );
             Bucket & getBucketAt( const BucketCoord & bucketCoord );
-            std::vector< BucketCoord > getBucketCoordsFor( const Entity & entity );
-            TileMap::Bucket getEntitiesNear( const Entity & entity );
+            void getBucketCoordsFor( const Entity & entity, std::vector< BucketCoord > & outCoords );
+            void getEntitiesNear( const Entity & entity, TileMap::Bucket & outBucket );
 
         protected:
             void initGrid( const unsigned int divisions
                 , const double sceneWidth, const double sceneHeight );
-            BucketCoord toCoord( const float x, const float y );
+            void toCoord( const float x, const float y, BucketCoord & outCoord );
 
             VAR_SYNTHESIZE_READONLY( unsigned int, Divisions );
             VAR_SYNTHESIZE_READONLY( double, SceneWidth );

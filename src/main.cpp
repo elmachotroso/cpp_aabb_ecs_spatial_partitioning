@@ -54,7 +54,8 @@ namespace SpacePartitionAlgorithm
         outIntersections.clear();
         for( Game::Entity * entity : entities )
         {
-            Game::TileMap::Bucket nearEntities = std::move( scene.getEntitiesNear( *entity ) );
+            Game::TileMap::Bucket nearEntities;
+            scene.getEntitiesNear( *entity, nearEntities );
             for( auto & kvp : nearEntities )
             {
                 Game::Entity * entityA = entity;
