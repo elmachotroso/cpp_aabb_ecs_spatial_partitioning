@@ -1,106 +1,53 @@
-# C++ Template (cpp_template)
+# C++ AABB + Entity-Component System + Spatial Partitioning
 
 Author: Andrei Victor  
-https://github.com/elmachotroso/cpp_template
+https://github.com/elmachotroso/cpp_aabb_ecs_spatial_partitioning
 
-A C++ Project Template using CMake and GTest.  
-Create new C++ project as a starting point.
+A C++ Project on the implementation of AABB collision of Entities with tests on Naivette +
+Spatial Paritioning (via Grid Buckets).
+
+Current Status: WIP Spatial Partitioning is still slow compared to Naivette approach. I need to
+conduct more checks on implementation to make it truly fast.
 ___  
 ## Tech Stack
 * Visual Studio Code
 * CMake
 * Make
 * GoogleTest (GTest)
+* C++20
 ___
 ## Usage
-This framework relies on five use cases with each has its corresponding helper shell scripts to execute.
-* Generate Project/Solution
-* Build Project/Solution
-* Run Test Suites/Cases
-* Run Application Binary
-* Clean Application Binary
-  
-### Generate Project/Solution
-Use `generate_projects` to create a project inside `build` subdirectory that will be created.
+This project relies on a CPP Template based on CMake + Make + GoogleTest.  
+Suggested way of building and running the program.
 
->**WARNING:** The first step of `generate_projects` is to delete the `build` folder tree.
-
-This will run CMake to generate the project for both `Debug` and `Release` configurations.
-
-**MacOS / Linux**
-```/bin/bash
-./generate_projects.sh
-```
-
-**Windows**
+### Windows
 ```cmd
+// Generate Projects -- will build the project based on Make (not Visual Studio)
 generate_projects.bat
-```
 
-### Build Project/Solution
-You can use either `build_release` or `build_debug` to start compiling and linking the projects.  
-This will affect both application and Google Test.
-
-**MacOS / Linux**
-```/bin/bash
-./build_debug.sh
-./build_release.sh
-```
-
-**Windows**
-```cmd
-build_debug.bat
+// Compile + Link the project to produce release builds of app.exe and app_test.exe in ./bin/Release/
 build_release.bat
-```
 
-### Run Test Suites/Cases
-You can use either `test_release` or `test_debug` to run the executable of GoogleTest for this project.
-
-**MacOS / Linux**
-```/bin/bash
-./test_debug.sh
-./test_release.sh
-```
-
-**Windows**
-```cmd
-test_debug.bat
+// This will execute the app_test.exe that expects to show unit tests of Rectangle2D and
+// Entity Component System
 test_release.bat
+
+// This is the proper way of running the application to showcase collision tests
+./bin/Release/app.exe ./res/entityblueprints.txt
 ```
 
-### Run Application Binary
-You can use either `run_release` or `run_debug` to run the application binary of this project.
-
-**MacOS / Linux**
+### MacOS / Unix shell
 ```/bin/bash
-./run_debug.sh
-./run_release.sh
-```
+// Generate Projects -- will build the project based on Make (not Visual Studio)
+./generate_projects.sh
 
-**Windows**
-```cmd
-run_debug.bat
-run_release.bat
-```
+// Compile + Link the project to produce release builds of app.exe and app_test.exe in ./bin/Release/
+./build_release.sh
 
-### Clean Application Binary
-You can use either `clean_release` or `clean_debug` to clean the application binary of this project.
->**NOTE:** This does not clean the `build` folder. `generate_projects` does the cleaning for `build`.
+// This will execute the app_test.exe that expects to show unit tests of Rectangle2D and
+// Entity Component System
+./test_release.sh
 
-**MacOS / Linux**
-```/bin/bash
-./clean_debug.sh
-./clean_release.sh
+// This is the proper way of running the application to showcase collision tests
+./bin/Release/app ./res/entityblueprints.txt
 ```
-
-**Windows**
-```cmd
-clean_debug.bat
-clean_release.bat
-```
-___
-## Other Notes
-This framework has been tested for:
-* `C++20`
-* `MacOS` using `make`
-* `Windows` using `make`
